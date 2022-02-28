@@ -21,7 +21,7 @@ INSERT INTO ratings VALUES(4, "Amelia-Earhart", "These Walls", 4);
 CREATE TABLE artists (song varchar(255) PRIMARY KEY, artist varchar(255));
 INSERT INTO artists VALUES("Freeway", "Aimee Mann");
 INSERT INTO artists VALUES("Days of Wine and Roses", "Bill Evans");
-INSERT INTO artists VALUES("These Walls", "Kendrick Lamar" "Otto");
+INSERT INTO artists VALUES("These Walls", "Kendrick Lamar", "Otto");
 ```
 
 Link to data base: http://localhost:8080/phpmyadmin/index.php?route=/database/structure&server=1&db=music-db
