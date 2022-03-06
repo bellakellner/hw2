@@ -7,6 +7,8 @@
   https://www.logicbig.com/quick-info/http/application_x-www-form-urlencoded.html-->
   <meta http-equiv="Content-Type" content="application/x-www-form-urlencoded"/>
 <title>Sample Submission Form</title>
+<!-- THIS WILL ERROR -->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -14,61 +16,156 @@
       $servername = "localhost";
       $username = "root";
       $password = "";
-   $dbname = "COMP333_SQL_Tutorial"; /*  this is the name of where the tables are located*/
+      $dbname = "music-db"; /*  this is the name of where the tables are located*/
 
 
        $conn = new mysqli($servername, $username, $password, $dbname);/*values that go in the table*/
        if ($conn->connect_error) {
-         // Exit with the error message.
-         // . is used to concatenate strings.
          die("Connection failed: " . $conn->connect_error);
        }
 
-       if(isset($_REQUEST["submit"])){
-      // Variables for the output and the web form below.
-      $out_value = "";
-      $s_id = $_REQUEST['student_id']; /*the imputs that the user inputs to get data*/
-      $s_test = $_REQUEST['test'];
+      if(isset($_REQUEST["submit"])){// registering a user
 
-      // The following is the core part of this script where we connect PHP
-      // and SQL.
-      // Check that the user entered data in the form.
-      if(!empty($s_id) && !empty($s_test)){
-        // If so, prepare SQL query with the data.
-        $sql_query = "SELECT * FROM student_grades WHERE student_id = ('$s_id') AND test = ('$s_test')"; /* first is what info to get and the two othere are from where.*/
-        //the $sql_query value is the student_grades
-        // star means everything
-        // Send the query and obtain the result.
-        // mysqli_query performs a query against the database.
-        $result = mysqli_query($conn, $sql_query);
-        //result is a query
-        // mysqli_fetch_assoc returns an associative array that corresponds to the
-        // fetched row or NULL if there are no more rows.
-        // Probably does not make much of a difference here, but, e.g., if there are
-        // multiple rows returned, you can iterate over those with a loop.
-        $row = mysqli_fetch_assoc($result);
-        //mysqli_fetch_assocgets the actual value from the querry
-        $out_value = "The grade is: " . $row['grade'];
-        //prints out the answer
+        $out_value = "";
+        $s_username = $_REQUEST['username']; /*inputs into values*/
+        $s_password = $_REQUEST['password'];
+
+        if(!empty($s_username) && !empty($s_password)){
+          $sql_query = "SELECT * FROM users WHERE username = ('$s_username')";
+          $result = mysqli_query($conn, $sql_query);
+
+          if (mysqli_num_rows($result) > 0){// checks if the username is in the data base
+           $out_value = "Username already exists";
+          }
+          else{
+           $sql = "INSERT INTO users (username, password) VALUES ('$s_username', '$s_password')";
+           $res_2 = mysqli_query($conn, $sql); //adds the user to the data base if not already added
+           $out_value = "New record created successfully";
+          }
+         }
+       else {
+        $out_value = "Enter another username";
+       }
       }
+
+      if(isset($_REQUEST["add"])){
+
+        $o_value = "";
+        $s_user1 = $_REQUEST['username_retrieval']; /*the imputs that the user inputs to get data*/
+        if(!empty($s_user1)){
+         $sql_query = "SELECT * FROM ratings WHERE username = ('$s_user1')"; // searches the database based on the username inputed
+
+         $result = mysqli_query($conn, $sql_query);
+         if (mysqli_num_rows($result) > 0){
+           $row = mysqli_fetch_all($result);
+           $o_value =  $row;
+         }
+         else{
+           $o_value = "NO songs or ratings";
+         }
+        }
+
       else {
-        $out_value = "No grade available!";
+        $o_value = "Enter a username";
       }
+     }
+
+
+    if(isset($_REQUEST["art"])){
+      // Variables for the output and the web form below.
+      $value = "";
+      $s_art = $_REQUEST['artist']; /*the imputs that the user inputs to get data*/
+      if(!empty($s_art)){
+       // If so, prepare SQL query with the data.
+       $sql_query = "SELECT * FROM artists WHERE artist = ('$s_art')"; /* first is what info to get and the two othere are from where.*/
+
+       $result = mysqli_query($conn, $sql_query);
+       if (mysqli_num_rows($result) > 0){
+       $row = mysqli_fetch_all($result);
+       $art_value = $row;
+
+       }
+       else{
+        $art_value = "No artist";
+       }
+      }
+
+     else {
+      $art_value = "Enter an artist";
+     }
     }
 
-    $conn->close();
-  ?>
 
-  <form method="GET" action="">
-Student ID: <input type="text" name="student_id" placeholder="Enter Student ID" /><br>
-Test: <input type="text" name="test" placeholder="Enter Test" /><br>
-<input type="submit" name="submit" value="Submit"/>
-<p><?php
-//html code for the user to query data
-    if(!empty($out_value)){
-      echo $out_value;
-    }
-  ?></p>
-  </form>
+
+$conn->close();
+?>
+
+<div id="container">
+  <h1 class="mid" id="tit">music-db</h1>
+  <h2 class="mid">Registration</h2>
+  <div>
+    <form method="POST" action="">
+      Username: <input type="text" name="username" placeholder="Enter username" /><br>
+      Password: <input type="text" name="password" placeholder="Enter password" /><br>
+      <input type="submit" name="submit" value="Register"/>
+      <p>
+      <?php
+          if(!empty($out_value)){ //prints result
+            echo $out_value;
+          }
+          else{
+          }
+       ?>
+      </p>
+    </form>
+  </div>
+
+  <h2 class="mid"> Retrive songs by username</h2>
+  <div>
+    <form method="GET" action="">
+    Username: <input type="text" name="username_retrieval" placeholder="Enter username" /><br>
+    <input type="submit" name="add" value="Retrive"/>
+    <p>
+    <?php
+        if(!empty($o_value)){
+          if( $o_value ==  $row){
+            for($x = 0; $x < sizeof($row); $x++){
+               echo '<br>' . $row[$x][2]. ' -> ' . $row[$x][3]. '<br>';
+            }
+          }
+          else{
+          echo $o_value;
+        }
+        }
+        else{}
+      ?>
+    </p>
+    </form>
+  </div>
+
+
+  <h2 class="mid">Retrive songs by artist</h2>
+  <div>
+    <form method="GET" action="">
+      Artist: <input type="text" name="artist" placeholder="Enter artist name" /><br>
+      <input type="submit" name="art" value="Retrive"/>
+      <p>
+      <?php
+          if(!empty($art_value)){
+            if($art_value ==  $row){
+              for($x = 0; $x < sizeof($row); $x++){
+                 echo '<br>' . $row[$x][0].  '<br>';
+              }
+            }
+            else{
+             echo $art_value;
+            }
+          }
+          else{}
+        ?>
+      </p>
+    </form>
+</div>
+  </div>
 </body>
 </html>
