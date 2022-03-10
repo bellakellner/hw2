@@ -1,7 +1,11 @@
 # hw2
 # Tables for HW1
 
-# 1. Useres table 
+# 1 Create a database names music-db
+
+# 2. Useres table
+
+
 
 ```sql
 CREATE TABLE users (username varchar(255) PRIMARY KEY, password varchar(255));
@@ -25,4 +29,3 @@ INSERT INTO artists VALUES("These Walls", "Kendrick Lamar", "Otto");
 ```
 
 Link to data base: http://localhost:8080/phpmyadmin/index.php?route=/database/structure&server=1&db=music-db
-
